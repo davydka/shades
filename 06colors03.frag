@@ -3,10 +3,20 @@ precision mediump float;
 #endif
 
 #define PI 3.14159265359
+#define TWO_PI 6.28318530718
 
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
+
+vec3 hsb2rgb( in vec3 c ){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                             6.0)-3.0)-1.0,
+                     0.0,
+                     1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix( vec3(1.0), rgb, c.y);
+}
 
 float plot(vec2 st, float pct){
     return smoothstep(pct-0.02, pct, st.y) - 
@@ -44,19 +54,12 @@ void main() {
     vec2 st = gl_FragCoord.xy/u_resolution;
     vec3 color = vec3(0.0);
 
-    float e = easing(st.x*2.0, abs(sin(u_time)));
-    // vec3 pct = vec3(easing(st.x, abs(sin(u_time))));
-    vec3 pct = vec3(e);
-    // vec3 pct = vec3(st.x*2.0);
-    // pct = step(0.5, pct);
-    vec3 pct2 = vec3(e)-1.0;
-    // vec3 pct2 = vec3(st.x*2.0)-1.0;
-    // pct2 = step(0.5, pct2);
-    // color = mix(colorA, colorB, pct);
-    if(st.x < 0.5)
-      color = mix(colorR, colorG, pct);
-    else 
-      color = mix(colorG, colorB, pct2);
+    vec2 toCenter = vec2(0.5)-st;
+    float angle = atan(toCenter.y, toCenter.x);
+    float radius = length(toCenter)*2.0;
+
+    float anim = abs(fract(u_time/20.0));
+    color = hsb2rgb(vec3((angle/TWO_PI)+anim, radius, 1.0));
 
     gl_FragColor = vec4(color, 1.0);
 }
