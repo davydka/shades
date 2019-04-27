@@ -43,6 +43,16 @@ float easing (float x, float a){
   }
 }
 
+float circularEaseIn (float x){
+  float y = 1.0 - sqrt(1.0 - x*x);
+  return y;
+}
+
+float circularEaseOut (float x){
+  float y = sqrt(1.0 - (1.0 - x * 1.0 - x));
+  return y;
+}
+
 vec3 colorA = vec3(0.38, 0.49, 0.733);
 vec3 colorZ = vec3(0.71, 0.19, 0.02);
 
@@ -59,7 +69,9 @@ void main() {
     float radius = length(toCenter)*2.0;
 
     float anim = abs(fract(u_time/20.0));
-    color = hsb2rgb(vec3((angle/TWO_PI)+anim, radius, 1.0));
+    // anim = 0.5;
+    color = hsb2rgb(vec3((angle/TWO_PI)+anim, circularEaseIn(radius)*4.0, 1.0));
+    // color = hsb2rgb(vec3((angle/TWO_PI)+anim, radius, 1.0));
 
     gl_FragColor = vec4(color, 1.0);
 }
