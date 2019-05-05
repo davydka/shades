@@ -1,0 +1,22 @@
+{
+  "name": "shades",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "render": "node index.js | glslViewer -l 07shapes04.frag"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davydka/shades.git"
+  },
+  "author": "David Whitely",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davydka/shades/issues"
+  },
+  "homepage": "https://github.com/davydka/shades#readme",
+  "dependencies": {
+    "gsap": "^2.1.2"
+  }
+}
