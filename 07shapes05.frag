@@ -90,28 +90,24 @@ vec3 div(vec2 pos, vec2 scale, float sides, vec2 st, vec3 divColor, vec3 bgColor
     return returnColor;
 }
 
-vec3 img(vec2 pos, vec2 scale, sampler2D tex, vec2 texResolution, vec2 st, vec3 bgColor) {
+vec3 img(vec2 pos, vec2 scale, sampler2D tex, vec2 texResolution, vec2 texSt, vec2 st, vec3 bgColor) {
     vec3 returnColor = vec3(0.0, 0.0, 0.0);
 
     if ( texResolution != vec2(0.0) ){
-        float imgAspect = texResolution.x/texResolution.y;
-        // imgAspect /= outAspect;
-        st = st-pos;
-        st *= 1.0/scale;
-        st *= 1.0/imgAspect;
-        /*
-        if(st.x > (texResolution.x/u_resolution.x)*scale.x/imgAspect) {
-        // if(st.x > (x(texResolution.x)+pos.x)/scale.x) {
-            discard;
-        }
-        */
-        /*
-        if(st.y > ((y(texResolution.y)/scale.y))/imgAspect) {
-        // if(st.x > (x(texResolution.x)+pos.x)/scale.x) {
-            discard;
-        }
-        */
-        vec4 img = texture2D(tex,st*vec2(1.,imgAspect));
+        float aspectImage   = texResolution.x/texResolution.y;
+        float aspectDisplay = u_resolution.y/u_resolution.x;
+        float scaleAdjust = texResolution.x / u_resolution.x;
+
+        // pos.y *= aspectImage;
+        // pos.y *= aspectDisplay;
+
+        st -= pos;
+        st.y *= aspectImage;
+        st.y *= aspectDisplay;
+        st *= 1.0 / scaleAdjust;
+        st *= 1.0 / scale;
+
+        vec4 img = texture2D(tex,st);
         returnColor = mix(bgColor,img.rgb,img.a);
     }
 
@@ -122,16 +118,8 @@ void main(){
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
     vec3 returnColor = blueColor;
 
-    vec2 st2 = gl_FragCoord.xy/u_tex0Resolution.xy;
-    returnColor = img(
-        xy(40.0, u_temp),
-        vec2(0.5),
-        u_tex0,
-        u_tex0Resolution,
-        gl_FragCoord.xy/u_tex0Resolution.xy,
-        returnColor
-    );
-
+    // postion(x,y), width + height
+    returnColor = rect(xy(500.0, 500.0), xy(100.0, 100.0), st, redColor, returnColor);
 
     returnColor = div(
         xy(250.0, 500.0),
@@ -141,8 +129,19 @@ void main(){
         pinkColor,
         returnColor
     );
+    
+    returnColor = img(
+        xy(250.0, 500.0),
+        vec2(0.25),
+        u_tex0,
+        u_tex0Resolution,
+        gl_FragCoord.xy/u_tex0Resolution.xy,
+        st,
+        returnColor
+    );
 
-    returnColor = line(xy(100.0, 200.0), xy(750.0, 300.0), x(10.0), st, purpleColor, returnColor);
+
+    returnColor = line(xy(100.0, 200.0), xy(750.0, 300.0), x(5.0), st, purpleColor, returnColor);
 
     returnColor = div(
         // xy(420.0, 360.0),
@@ -161,8 +160,6 @@ void main(){
     
     rect = vec4(xy(125.0, 25.0), xy(150.0, 50.0));
     returnColor = rect2(rect, st, greenColor, returnColor);
-
-    returnColor = rect(xy(500.0, 500.0), xy(100.0, 100.0), st, redColor, returnColor);
 
     gl_FragColor = vec4(returnColor,1.0);
 }
