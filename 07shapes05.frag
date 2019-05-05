@@ -98,9 +98,6 @@ vec3 img(vec2 pos, vec2 scale, sampler2D tex, vec2 texResolution, vec2 texSt, ve
         float aspectDisplay = u_resolution.y/u_resolution.x;
         float scaleAdjust = texResolution.x / u_resolution.x;
 
-        // pos.y *= aspectImage;
-        // pos.y *= aspectDisplay;
-
         st -= pos;
         st.y *= aspectImage;
         st.y *= aspectDisplay;
@@ -129,7 +126,7 @@ void main(){
         pinkColor,
         returnColor
     );
-    
+
     returnColor = img(
         xy(250.0, 500.0),
         vec2(0.25),
