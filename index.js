@@ -1,7 +1,16 @@
 const gsap = require('gsap');
 const { spawn } = require('child_process')
 
+let realtime = true;
+process.argv.map(item => {
+  if(item == '--headlessRender'){
+    realtime = false;
+  }
+});
+
 // ffmpeg -r 60 -f image2 -i seq/%04d.png -crf libx264 -crf 25 -pix_fmt yuv420p out/video.mp4
+// node index.js | glslViewer 07shapes05.frag -w 500 -h 500 -l assets/test2.png > /dev/null 2>&1
+
 
 // var tl = new TimelineMax({repeat:2, repeatDelay:1});
 // tl.pause();
@@ -11,29 +20,33 @@ const o = {
 };
 let tween = new TweenMax.to(o, 1.0, {
   value: 500.0,
-  repeat: 1,
+  repeat: 0,
   yoyo: true,
   onComplete: function(){
+    process.exit();
   }
 })
 
-tween.paused(true);
+if(!realtime) {
+  tween.paused(true);
+  stepRender();
+}
 
-// realtime:
-// TweenMax.ticker.addEventListener("tick", render);
+if(realtime) {
+  TweenMax.ticker.addEventListener("tick", render);
+}
 
-// non-realtime
-let i = 0;
-render();
 function render() {
-  // realtime:
-  // process.stdout.write(`u_temp,${Math.trunc(o.value)}.\n`);
+  process.stdout.write(`u_temp,${Math.trunc(o.value)}.\n`);
+}
 
+let i = 0;
+function stepRender() {
   const frameName = String(i).padStart(4, '0');
   const u_temp = spawn('echo', [`u_temp,${Math.trunc(o.value)}.`]);
 
   const glslViewer = spawn('glslViewer', [
-    '07shapes04.frag',
+    '07shapes05.frag',
     '-w',
     '1920',
     '-h',
@@ -49,7 +62,7 @@ function render() {
   glslViewer.on('exit', code => {
     console.log(`Exit code is: ${code}`);
     tween.seek(i/60.0);
-    render();
+    stepRender();
   });
 
   i++;
