@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/davydka/shades#readme",
   "dependencies": {
+    "download": "^7.1.0",
     "gsap": "^2.1.2"
   }
 }

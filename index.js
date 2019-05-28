@@ -10,6 +10,7 @@ process.argv.map(item => {
 
 // ffmpeg -r 60 -y -f image2 -i seq/%04d.png -crf libx264 -crf 25 -pix_fmt yuv420p out/video.mp4
 // node index.js | glslViewer 07shapes05.frag -w 500 -h 500 -l assets/test2.png > /dev/null 2>&1
+// node index.js | glslViewer 07shapes05.frag -w 500 -h 500 -l assets/test2.png > /dev/null 2>&1
 
 
 // var tl = new TimelineMax({repeat:2, repeatDelay:1});
