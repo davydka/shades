@@ -13,8 +13,6 @@ uniform float u_time;
 uniform float u_temp;
 uniform sampler2D u_tex0;
 uniform vec2 u_tex0Resolution;
-uniform sampler2D u_tex1;
-uniform vec2 u_tex1Resolution;
 
 vec3 redColor = vec3(1.000,0.133,0.024);
 vec3 greenColor = vec3(0.000,0.833,0.224);
@@ -121,8 +119,11 @@ void main(){
     st *= 0.5; // retina?
     vec3 returnColor = blueColor;
 
+    float yy = 0.0;
+    // yy = (u_resolution.y - u_tex0Resolution.y);
+
     returnColor = img(
-        xy(0.0, 0.0),
+        xy(0.0, yy),
         vec2(1.0),
         u_tex0,
         u_tex0Resolution,
@@ -131,16 +132,6 @@ void main(){
         returnColor
     );
 
-
-    returnColor = img(
-        xy(0.0, 0.0),
-        vec2(1.0),
-        u_tex1,
-        u_tex1Resolution,
-        gl_FragCoord.xy/u_tex0Resolution.xy,
-        st,
-        returnColor
-    );
 
     float time1 = u_time/10.0;
     time1 = abs(mod(time1, 2.0) - 1.0);
@@ -156,14 +147,6 @@ void main(){
         temp.g = sin(fract(temp.g+time2));
     if(temp.b < 1.0)
         temp.b = sin(fract(temp.b+time3));
-
-    /*
-    float time = u_time/1.0;
-    vec3 temp = returnColor;
-    temp.r = fract(temp.r*time);
-    temp.g = fract(temp.g*time);
-    temp.b = fract(temp.b*time);
-    */
 
     returnColor = temp;
 
